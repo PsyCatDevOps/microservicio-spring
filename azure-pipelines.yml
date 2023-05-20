@@ -17,7 +17,7 @@ stages:
     steps:
     - checkout: self
 
-- stage: 'Build and analyze'
+- stage: Build
   jobs:
   - job: Build
     displayName: "Build and analyze"

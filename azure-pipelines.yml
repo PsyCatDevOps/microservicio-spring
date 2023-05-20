@@ -39,8 +39,13 @@ stages:
   - job: CodeReview
     displayName: "Code Review"
     steps:
-    - script: |
-        # Code review commands
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SonarCloud'
+        organization: 'psycatdevops'
+        scannerMode: 'Other'
+      displayName: "Prepare SonarCloud analysis"
+    - task: SonarCloudAnalyze@1
       displayName: "Run SonarCloud analysis"
 
 - stage: Deploy

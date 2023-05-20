@@ -40,21 +40,11 @@ stages:
         projectName: 'microservicio-spring'
 #        extraProperties: 'sonar.exclusions=src/main/java/com/example/testingweb/GretingService.java'
       displayName: "SonarCloud Prepare"
-    - task: Gradle@3
-      inputs:
-        gradleWrapperFile: 'gradlew'
-        workingDirectory: "$(Build.SourcesDirectory)"
-        publishJUnitResults: true
-        testResultsFiles: "*/TEST-.xml"
-        javaHomeOption: 'JDKVersion'
-        sonarQubeRunAnalysis: false
-        spotBugsAnalysis: false
-      displayName: "Run test"
 
     - task: Gradle@3
       inputs:
         gradleWrapperFile: 'gradlew'
-        tasks: 'sonarqube'
+        tasks: 'sonar'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: true
@@ -91,6 +81,13 @@ stages:
   - job: Test
     displayName: "Test"
     steps:
-    - script: |
-        # Test commands
-      displayName: "Run performance tests"
+    - task: Gradle@3
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        workingDirectory: "$(Build.SourcesDirectory)"
+        publishJUnitResults: true
+        testResultsFiles: "*/TEST-.xml"
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+      displayName: "Run tests"

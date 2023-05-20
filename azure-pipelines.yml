@@ -24,6 +24,7 @@ stages:
     steps:
     - task: Gradle@3
       inputs:
+        tasks: 'build'
         gradleWrapperFile: 'gradlew'
         gradleOptions: '-Xmx3072m'
         javaHomeOption: 'JDKVersion'
@@ -31,7 +32,6 @@ stages:
         jdkArchitectureOption: 'x64'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
-        tasks: 'build'
       displayName: "Build the project"
 
 - stage: CodeReview
@@ -39,14 +39,15 @@ stages:
   - job: CodeReview
     displayName: "Code Review"
     steps:
-    - task: SonarCloudPrepare@1
+    - task: Gradle@3
       inputs:
-        SonarCloud: 'SonarCloud'
-        organization: 'psycatdevops'
-        scannerMode: 'Other'
-      displayName: "Prepare SonarCloud analysis"
-    - task: SonarCloudAnalyze@1
-      displayName: "Run SonarCloud analysis"
+        tasks: 'analyze'
+        sonarQubeRunAnalysis: true
+        sqGradlePluginVersionChoice: 'specify'
+        sonarQubeGradlePluginVersion: '2.6.1'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+      displayName: "Run SonarQube analysis"
 
 - stage: Deploy
   jobs:

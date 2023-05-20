@@ -8,14 +8,29 @@ stages:
 - stage: Checkout
   jobs:
   - job: Checkout
-    displayName: "Checkout"
+    displayName: 'Checkout'
     steps:
     - checkout: self
 
 - stage: Build
   jobs:
   - job: Build
-    displayName: "Build"
+    displayName: 'Build'
+    steps:
+    - task: Gradle@3
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'build'
+        publishJUnitResults: true
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+      displayName: "Build the project"
+
+- stage: Code Review
+  jobs:
+  - job: Analyze
+    displayName: 'Analyze'
     steps:
     - task: SonarCloudPrepare@1
       inputs:
@@ -23,18 +38,30 @@ stages:
         organization: 'psycatdevops'
         projectKey: 'PsyCatDevOps_microservicio-spring'
         projectName: 'microservicio-spring'
+#        extraProperties: 'sonar.exclusions=src/main/java/com/example/testingweb/GretingService.java'
       displayName: "SonarCloud Prepare"
     - task: Gradle@3
       inputs:
         gradleWrapperFile: 'gradlew'
-        tasks: 'build'
+        workingDirectory: "$(Build.SourcesDirectory)"
         publishJUnitResults: true
+        testResultsFiles: "*/TEST-.xml"
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+      displayName: "Run test"
+
+    - task: Gradle@3
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'sonarqube'
+        publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: true
         sqGradlePluginVersionChoice: 'specify'
         sonarQubeGradlePluginVersion: '3.3'
         spotBugsAnalysis: false
-      displayName: "Build the project"
+      displayName: "SonarQube Analysis"
 
 - stage: Deploy
   jobs:

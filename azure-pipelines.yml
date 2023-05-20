@@ -27,8 +27,8 @@ stages:
     - task: Gradle@3
       inputs:
         gradleWrapperFile: 'gradlew'
-        tasks: 'sonarqube'
-        publishJUnitResults: false
+        tasks: 'build'
+        publishJUnitResults: true
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: true
         sqGradlePluginVersionChoice: 'specify'
@@ -41,9 +41,24 @@ stages:
   - job: Deploy
     displayName: "Deploy"
     steps:
-    - script: |
-        # Deployment commands
+    - task: Docker@2
+      inputs:
+       containerRegistry: 'Docker'
+       command: 'login'
+    - task: Docker@2
+      inputs:
+       containerRegistry: 'Docker'
+       repository: 'tu_user_docker/microservicio-spring'
+       command: 'build'
+       Dockerfile: '**/Dockerfile'
+    - task: Docker@2
+      inputs:
+       containerRegistry: 'Docker'
+       repository: 'tu_user_docker/microservicio-spring'
+       command: 'push'
       displayName: "Deploy the container"
+
+
 - stage: Test
   jobs:
   - job: Test

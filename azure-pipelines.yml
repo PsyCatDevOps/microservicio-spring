@@ -1,0 +1,56 @@
+trigger:
+- feature-ms-fernandoArzola-mensaje
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+
+- stage: Jobs
+  jobs:
+  - job: Jobs
+    displayName: 'Tareas'
+    steps:
+    - task: Gradle@3
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'build'
+        publishJUnitResults: true
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+      displayName: "Build the project"
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SonarCloud'
+        organization: 'psycatdevops'
+        projectKey: 'PsyCatDevOps_microservicio-spring'
+        projectName: 'microservicio-spring'
+        extraProperties: 'sonar.exclusions=src/main/java/com/example/testingweb/GretingService.java'
+      displayName: "SonarCloud Prepare"
+
+    - task: Gradle@3
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'sonarqube'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: true
+        sqGradlePluginVersionChoice: 'specify'
+        sonarQubeGradlePluginVersion: '3.5.0.2730'
+        spotBugsAnalysis: false
+      displayName: "SonarQube Analysis"
+
+    - task: sonarcloud-buildbreaker@2
+      inputs:
+        SonarCloud: 'SonarCloud'
+        organization: 'psycatdevops'
+      displayName: "SonarCloud Breaker"
+
+    - task: Docker@2
+      inputs:
+       containerRegistry: 'Docker'
+       repository: 'arufonsu/microservicio-spring'
+       command: 'buildAndPush'
+       Dockerfile: '**/Dockerfile'
+      displayName: "Deploy and Push container"

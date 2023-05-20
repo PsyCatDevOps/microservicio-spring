@@ -17,25 +17,24 @@ stages:
   - job: Build
     displayName: "Build"
     steps:
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SonarCloud'
+        organization: 'psycatdevops'
+        projectKey: 'PsyCatDevOps_microservicio-spring'
+        projectName: 'microservicio-spring'
+      displayName: "SonarCloud Prepare"
     - task: Gradle@3
       inputs:
         gradleWrapperFile: 'gradlew'
-        gradleOptions: '-Xmx3072m'
+        tasks: 'sonarqube'
+        publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.8'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/TEST-*.xml'
-        tasks: 'build'
+        sonarQubeRunAnalysis: true
+        sqGradlePluginVersionChoice: 'specify'
+        sonarQubeGradlePluginVersion: '3.3'
+        spotBugsAnalysis: false
       displayName: "Build the project"
-
-- stage: CodeReview
-  jobs:
-  - job: CodeReview
-    displayName: "Code Review"
-    steps:
-    - task: SonarCloudAnalyze@1
-      displayName: "Run SonarCloud analysis"
 
 - stage: Deploy
   jobs:

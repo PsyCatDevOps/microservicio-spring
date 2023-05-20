@@ -35,7 +35,7 @@ stages:
         sonarQubeGradlePluginVersion: '2.6.1'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
-      displayName: "Build the project and Run SonarQube analysis"
+      displayName: "Build and analyze the project"
 
 - stage: Deploy
   jobs:

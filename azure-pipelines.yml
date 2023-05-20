@@ -27,10 +27,10 @@ stages:
         spotBugsAnalysis: false
       displayName: "Build the project"
 
-- stage: Code Review
+- stage: CodeReview
   jobs:
-  - job: Analyze
-    displayName: 'Analyze'
+  - job: CodeReview
+    displayName: 'Code Review'
     steps:
     - task: SonarCloudPrepare@1
       inputs:

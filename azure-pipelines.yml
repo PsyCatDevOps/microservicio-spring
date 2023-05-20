@@ -49,6 +49,8 @@ stages:
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: false
         spotBugsAnalysis: false
+      displayName: "Run test"
+
     - task: Gradle@3
       inputs:
         gradleWrapperFile: 'gradlew'

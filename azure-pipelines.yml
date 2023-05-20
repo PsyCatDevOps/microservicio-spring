@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - feature-ms-fernandoArzola-mensaje
 
@@ -20,22 +15,27 @@ stages:
 - stage: Build
   jobs:
   - job: Build
-    displayName: "Build and analyze"
+    displayName: "Build"
     steps:
     - task: Gradle@3
       inputs:
-        tasks: 'build'
         gradleWrapperFile: 'gradlew'
         gradleOptions: '-Xmx3072m'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         jdkArchitectureOption: 'x64'
-        sonarQubeRunAnalysis: true
-        sqGradlePluginVersionChoice: 'specify'
-        sonarQubeGradlePluginVersion: '2.6.1'
         publishJUnitResults: true
         testResultsFiles: '**/TEST-*.xml'
-      displayName: "Build and analyze the project"
+        tasks: 'build'
+      displayName: "Build the project"
+
+- stage: CodeReview
+  jobs:
+  - job: CodeReview
+    displayName: "Code Review"
+    steps:
+    - task: SonarCloudAnalyze@1
+      displayName: "Run SonarCloud analysis"
 
 - stage: Deploy
   jobs:
@@ -45,7 +45,6 @@ stages:
     - script: |
         # Deployment commands
       displayName: "Deploy the container"
-
 - stage: Test
   jobs:
   - job: Test

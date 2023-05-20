@@ -17,10 +17,10 @@ stages:
     steps:
     - checkout: self
 
-- stage: Build with analysis
+- stage: 'Build and analyze'
   jobs:
   - job: Build
-    displayName: "Build"
+    displayName: "Build and analyze"
     steps:
     - task: Gradle@3
       inputs:

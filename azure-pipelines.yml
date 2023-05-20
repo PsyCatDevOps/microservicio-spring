@@ -17,7 +17,7 @@ stages:
     steps:
     - checkout: self
 
-- stage: Build + SonarQube analysis
+- stage: Build with analysis
   jobs:
   - job: Build
     displayName: "Build"
